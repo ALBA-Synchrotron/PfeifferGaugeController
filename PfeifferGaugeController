@@ -1,0 +1,6 @@
+#!/bin/sh
+
+. alba_blissrc
+
+cd $SICILIA/ds/python/VacuumController/
+screen -dm -S PfeifferGaugeController-$1 python PfeifferGaugeController/PfeifferGaugeController.py $1 $2
