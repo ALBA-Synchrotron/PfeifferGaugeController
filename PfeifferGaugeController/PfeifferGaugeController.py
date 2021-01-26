@@ -38,7 +38,7 @@ import PyTango
 import sys
 import time
 import inspect,traceback
-
+from PyTango import DevFailed
 from fandango.device import Dev4Tango,TimedQueue
 
 ## @note Backward compatibility between PyTango3 and PyTango7
@@ -441,8 +441,8 @@ class PfeifferGaugeController(Dev4Tango):
     def SendCommand(self, argin):
         print "In ", self.get_name(), "::SendCommand()"
         #    Add your own code here
-        
-        return argout
+        raise NotImplemented('The method is not implemented')
+
 
 #------------------------------------------------------------------
 #       DevSerReadRaw command:
