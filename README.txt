@@ -13,9 +13,12 @@ TPG261 / TPG300 / MaxiGauge
 
 Modules can be obtained from:
 
-  https://svn.code.sf.net/p/tango-ds/code/DeviceClasses/Vacuum/VacuumController
+  https://github.com/ALBA-Synchrotron/VacuumController
+  https://github.com/tango-controls/fandango
+  https://github.com/ALBA-Synchrotron/tango_serial
+  or
   https://svn.code.sf.net/p/tango-ds/code/DeviceClasses/Communication/SerialLine
-  https://svn.code.sf.net/p/tango-cs/code/share/fandango
+
 
 
 For more information check the VacuumController/CHANGES and README.txt files
