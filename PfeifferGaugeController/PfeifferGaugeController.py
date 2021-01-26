@@ -581,7 +581,7 @@ class PfeifferGaugeControllerClass(PyTango.PyDeviceClass):
 #    PfeifferGaugeController class main method
 #
 #==================================================================
-if __name__ == '__main__':
+def main():
     try:
         py = PyTango.PyUtil(sys.argv)
         py.add_TgClass(PfeifferGaugeControllerClass,PfeifferGaugeController,'PfeifferGaugeController')
@@ -594,3 +594,7 @@ if __name__ == '__main__':
         print '-------> Received a DevFailed exception:',e
     except Exception,e:
         print '-------> An unforeseen exception occured....',e
+
+
+if __name__ == '__main__':
+    main()
