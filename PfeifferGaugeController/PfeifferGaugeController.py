@@ -46,6 +46,7 @@ if 'PyDeviceClass' not in dir(PyTango): PyTango.PyDeviceClass = PyTango.DeviceCl
 if 'PyUtil' not in dir(PyTango): PyTango.PyUtil = PyTango.Util
 
 from VacuumController import *
+from VacuumController.SerialVacuumDevice import getExpNumbers
 
 VALID_TYPES = ('MaxiGauge','TPG300','TPG261')
 
