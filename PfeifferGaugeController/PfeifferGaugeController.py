@@ -439,11 +439,32 @@ class PfeifferGaugeController(Dev4Tango):
 #    argin:  DevString    
 #    argout: DevString    
 #------------------------------------------------------------------
-    def SendCommand(self, argin):
-        print "In ", self.get_name(), "::SendCommand()"
+    def SendCommand(self, argin,separator='\n'):
+        self.debug("In "+self.get_name()+"::SendCommand()")
         #    Add your own code here
-        raise NotImplemented('The method is not implemented')
-
+        self.info('>'*80)
+        result = ''
+        self.SVD.stop()
+        if self.SVD.Alive:
+            self.warning( 'SVD IS STILL ALIVE!!!')
+        try:
+            argin = fun.toSequence(argin)
+            for arg in argin:
+                result+=self.SVD.serialComm(arg)+separator
+                self.info('===> %s'%(arg))
+                self.SVD.event.wait(.1)
+            result = result.strip()
+            self.info('<=== %s'%result)
+        except PyTango.DevFailed, e:
+            self.error( 'Exception in sendCommand():'+ str(e))
+            raise Exception('Exception in sendCommand():', str(e))
+        except Exception,e:
+            self.error('Exception in sendCommand():%s'%traceback.format_exc())
+            #self.setStatus(self.getStatus())
+            raise Exception('Exception in sendCommand():', traceback.format_exc())
+        self.SVD.start()
+        self.info('<'*80)
+        return result
 
 #------------------------------------------------------------------
 #       DevSerReadRaw command:
