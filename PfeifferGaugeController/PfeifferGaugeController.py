@@ -39,6 +39,7 @@ import sys
 import time
 import inspect,traceback
 from PyTango import DevFailed
+import fandango as fn
 from fandango.device import Dev4Tango,TimedQueue
 
 ## @note Backward compatibility between PyTango3 and PyTango7
@@ -54,7 +55,7 @@ VALID_TYPES = ('MaxiGauge','TPG300','TPG261')
 ETX = '\x03' #Reset the interface
 CR = '\x0D' #End of String
 LF = '\x0A' #End of String
-ENQ = '\x05' #Request for data transmission
+ENQ = '\x05\r\n' #Request for data transmission
 ACK = '\x06' #Positive Report Signal
 NACK = '\x15' #Negative report Signal
 ESC = '\x1B'
@@ -448,9 +449,11 @@ class PfeifferGaugeController(Dev4Tango):
         if self.SVD.Alive:
             self.warning( 'SVD IS STILL ALIVE!!!')
         try:
-            argin = fun.toSequence(argin)
+            READ=False if ',WRITE' in argin else True
+            argin = argin.replace(',WRITE','')
+            argin = fn.toSequence(argin)
             for arg in argin:
-                result+=self.SVD.serialComm(arg)+separator
+                result+=self.SVD.serialComm(arg,READ,self.SVD.PostCommand)+separator
                 self.info('===> %s'%(arg))
                 self.SVD.event.wait(.1)
             result = result.strip()
@@ -466,6 +469,63 @@ class PfeifferGaugeController(Dev4Tango):
         self.info('<'*80)
         return result
 
+#------------------------------------------------------------------
+#    SensorOffOnAuto command:
+#
+#    Description: 
+#    argin:  DevVarStringArray
+#    argout: DevString
+#------------------------------------------------------------------
+    def SensorOffOnAuto(self, argin,separator='\n'):
+        self.warning("In "+self.get_name()+"::SensorOffOnAuto(%s)"%argin)
+        try:
+            sensor,mode = [str(a).lower() for a in argin]
+            sensors = 'a1','a2','b1','b2'
+            modes = 'nada','off','auto','on'
+            sensor,mode = sensors.index(sensor),modes.index(mode)
+        except:
+            traceback.print_exc()
+            raise(Exception('Args should be: A1|A2|B1|B2,OFF|ON|AUTO'))
+        sensors = [0]*4
+        sensors[sensor] = mode
+        sensors = 'SEN,'+','.join(map(str,sensors))        
+        self.SendCommand(sensors+',WRITE\r\n')
+        
+    def ChannelOn(self, argin):
+        self.warning("In "+self.get_name()+"::ChannelOn(%s)"%argin)
+        try:
+            argin = argin.lower()
+            if 'a1' in argin or 'p1' in argin:
+                sensors = 'SEN,3,0,0,0'
+            if 'a2' in argin or 'p2' in argin:
+                sensors = 'SEN,0,3,0,0'
+            if 'b1' in argin or 'p3' in argin:
+                sensors = 'SEN,0,0,3,0'
+            if 'b2' in argin or 'p4' in argin:
+                sensors = 'SEN,0,0,0,3'
+            self.SendCommand(sensors+',WRITE\r\n')
+        except Exception as e:
+            traceback.print_exc()
+            raise e
+        
+    def ChannelOff(self, argin):
+        self.warning("In "+self.get_name()+"::ChannelOff(%s)"%argin)
+        try:
+            argin = argin.lower()
+            if 'a1' in argin or 'p1' in argin:
+                sensors = 'SEN,1,0,0,0'
+            if 'a2' in argin or 'p2' in argin:
+                sensors = 'SEN,0,1,0,0'
+            if 'b1' in argin or 'p3' in argin:
+                sensors = 'SEN,0,0,1,0'
+            if 'b2' in argin or 'p4' in argin:
+                sensors = 'SEN,0,0,0,1'
+            self.SendCommand(sensors+',WRITE\r\n')
+        except Exception as e:
+            traceback.print_exc()
+            raise e
+
+        
 #------------------------------------------------------------------
 #       DevSerReadRaw command:
 #
@@ -517,7 +577,28 @@ class PfeifferGaugeControllerClass(PyTango.PyDeviceClass):
             {
                 'Display level':PyTango.DispLevel.EXPERT,
             } ],
+            
+        'SensorOffOnAuto':
+            [[PyTango.DevVarStringArray, "[A1|A2|B1|B2,OFF|ON|AUTO"],
+            [PyTango.DevString, "[A1|A2|B1|B2,OFF|ON|AUTO"],
+            {
+                'Display level':PyTango.DispLevel.EXPERT,
+            } ],            
 
+        'ChannelOn':
+            [[PyTango.DevString, "[A1|A2|B1|B2"],
+            [PyTango.DevString, "[A1|A2|B1|B2"],
+            {
+                'Display level':PyTango.DispLevel.EXPERT,
+            } ],    
+            
+        'ChannelOff':
+            [[PyTango.DevString, "[A1|A2|B1|B2"],
+            [PyTango.DevString, "[A1|A2|B1|B2"],
+            {
+                'Display level':PyTango.DispLevel.EXPERT,
+            } ],    
+            
         'DevSerReadRaw':
             [[PyTango.DevVoid, "none"],
             [PyTango.DevString, "none"],
