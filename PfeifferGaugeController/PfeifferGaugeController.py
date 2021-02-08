@@ -338,6 +338,44 @@ class PfeifferGaugeController(Dev4Tango):
     def read_attr_hardware(self,data):
         print "In ", self.get_name(), "::read_attr_hardware()"
 
+#------------------------------------------------------------------
+#    Read PA1 attribute
+#------------------------------------------------------------------
+    def read_PA1(self, attr):
+        print "In ", self.get_name(), "::read_PA1()"
+        
+        #    Add your own code here
+        attr.set_value(self.read_pressure_attribute(1,self.get_channel_command(1)))
+
+
+#------------------------------------------------------------------
+#    Read PA2 attribute
+#------------------------------------------------------------------
+    def read_PA2(self, attr):
+        print "In ", self.get_name(), "::read_PA2()"
+        
+        #    Add your own code here
+        attr.set_value(self.read_pressure_attribute(2,self.get_channel_command(2)))
+
+#------------------------------------------------------------------
+#    Read PB1 attribute
+#------------------------------------------------------------------
+    def read_PB1(self, attr):
+        print "In ", self.get_name(), "::read_PB1()"
+        
+        #    Add your own code here
+        attr.set_value(self.read_pressure_attribute(3,self.get_channel_command(3)))
+
+
+#------------------------------------------------------------------
+#    Read PB2 attribute
+#------------------------------------------------------------------
+    def read_PB2(self, attr):
+        print "In ", self.get_name(), "::read_PB2()"
+        
+        #    Add your own code here
+        attr.set_value(self.read_pressure_attribute(4,self.get_channel_command(4)))
+
 
 
 #------------------------------------------------------------------
@@ -610,6 +648,38 @@ class PfeifferGaugeControllerClass(PyTango.PyDeviceClass):
 
     #    Attribute definitions
     attr_list = {
+        'PA1':
+            [[PyTango.DevDouble,
+            PyTango.SCALAR,
+            PyTango.READ],
+            {
+                'unit':"mbar",
+                'format':"scientific;uppercase;setprecision(3)",
+            } ],
+        'PA2':
+            [[PyTango.DevDouble,
+            PyTango.SCALAR,
+            PyTango.READ],
+            {
+                'unit':"mbar",
+                'format':"scientific;uppercase;setprecision(3)",
+            } ],
+        'PB1':
+            [[PyTango.DevDouble,
+            PyTango.SCALAR,
+            PyTango.READ],
+            {
+                'unit':"mbar",
+                'format':"scientific;uppercase;setprecision(3)",
+            } ],
+        'PB2':
+            [[PyTango.DevDouble,
+            PyTango.SCALAR,
+            PyTango.READ],
+            {
+                'unit':"mbar",
+                'format':"scientific;uppercase;setprecision(3)",
+            } ],         
         'P1':
             [[PyTango.DevDouble,
             PyTango.SCALAR,
