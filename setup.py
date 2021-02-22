@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 # The version is updated automatically with bumpversion
 # Do not update manually
-__version = '3.13.2'
+__version = '4.0.0'
 
 long_description = 'This device server is part of the ALBA Vacuum suite and ' \
                    'requires VacuumController and Fandango. It provides ' \
